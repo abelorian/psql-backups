@@ -24,11 +24,18 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
 
   const client = new S3Client(clientOptions);
 
+  const now = new Date();
+  const year = format(now, 'yyyy');
+  const month = format(now, 'MM');
+  const day = format(now, 'dd');
+
+  const s3Key = `miniurl/${year}/${month}/${day}/${name}`;
+
   await new Upload({
     client,
     params: {
       Bucket: bucket,
-      Key: name,
+      Key: s3Key,
       Body: createReadStream(path),
     },
   }).done();
