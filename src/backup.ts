@@ -40,16 +40,9 @@ const dumpToFile = async (filePath: string) => {
   console.log("Dumping DB to file...");
 
   await new Promise((resolve, reject) => {
-    exec(`pg_dump --dbname=${env.BACKUP_DATABASE_URL} --format=tar | gzip > ${filePath}`, (error, stdout, stderr) => {
+    exec(`pg_dump --dbname=${env.BACKUP_DATABASE_URL} --format=plain > ${filePath}`, (error, stdout, stderr) => {
       if (error) {
         reject({ error: error, stderr: stderr.trimEnd() });
-        return;
-      }
-
-      // check if archive is valid and contains data
-      const isValidArchive = (execSync(`gzip -cd ${filePath} | head -c1`).length == 1) ? true : false;
-      if (isValidArchive == false) {
-        reject({ error: "Backup archive file is invalid or empty; check for errors above" });
         return;
       }
 
@@ -58,7 +51,7 @@ const dumpToFile = async (filePath: string) => {
         console.log({ stderr: stderr.trimEnd() });
       }
 
-      console.log("Backup archive file is valid");
+      console.log("Backup file is valid");
       console.log("Backup filesize:", filesize(statSync(filePath).size));
 
       // if stderr contains text, let the user know that it was potently just a warning message
@@ -72,6 +65,7 @@ const dumpToFile = async (filePath: string) => {
 
   console.log("DB dumped to file...");
 }
+
 
 const deleteFile = async (path: string) => {
   console.log("Deleting file...");
