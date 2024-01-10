@@ -32,6 +32,8 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
 
   const s3Key = `${year}/${month}/${day}/${name}`;
 
+  console.log("s3Key", s3Key);
+
   await new Upload({
     client,
     params: {
