@@ -30,7 +30,7 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
   const month = format(now, 'MM');
   const day = format(now, 'dd');
 
-  const s3Key = `miniurl/${year}/${month}/${day}/${name}`;
+  const s3Key = `/miniurl/${year}/${month}/${day}/${name}`;
 
   await new Upload({
     client,
