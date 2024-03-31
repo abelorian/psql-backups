@@ -26,11 +26,11 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
   const client = new S3Client(clientOptions);
 
   const now = new Date();
-  const year = format(now, 'yyyy');
-  const month = format(now, 'MM');
+  // const year = format(now, 'yyyy');
+  // const month = format(now, 'MM');
   const day = format(now, 'dd');
 
-  const s3Key = `${year}/${month}/${day}/${name}`;
+  const s3Key = `${day}/${name}`;
 
   console.log("s3Key", s3Key);
 
@@ -91,8 +91,13 @@ const deleteFile = async (path: string) => {
 export const backup = async () => {
   console.log("Initiating DB backup...");
 
-  const date = new Date().toISOString();
-  const timestamp = date.replace(/[:.]+/g, '-');
+  const date = new Date()
+  
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  
+  const timestamp = `${day}-${hour}00`;
+  
   const filename = `backup-${timestamp}.sql`;
   const filepath = path.join(os.tmpdir(), filename);
 
