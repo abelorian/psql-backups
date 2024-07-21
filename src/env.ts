@@ -22,5 +22,10 @@ export const env = envsafe({
     desc: 'Run a backup on startup of this application',
     default: false,
     allowEmpty: true,
+  }),
+  AWS_S3_FORCE_PATH_STYLE: bool({
+    desc: 'Minio compability',
+    default: false,
+    allowEmpty: true,
   })
 })
