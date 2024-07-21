@@ -23,6 +23,10 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
     clientOptions['endpoint'] = env.AWS_S3_ENDPOINT;
   }
 
+    if (env.AWS_S3_FORCE_PATH_STYLE === 'true') {
+    clientOptions.forcePathStyle = true; // Configurar forcePathStyle según la variable de entorno
+  }
+
   const client = new S3Client(clientOptions);
 
   const now = new Date();
