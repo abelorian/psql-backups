@@ -27,5 +27,10 @@ export const env = envsafe({
     desc: 'Minio compability',
     default: false,
     allowEmpty: true,
+  }),
+  PG_DUMP_COMMAND: str({
+    desc: 'pg dump command',
+    default: '',
+    allowEmpty: true,
   })
 })
