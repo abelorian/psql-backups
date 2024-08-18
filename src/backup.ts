@@ -109,7 +109,7 @@ export const backup = async () => {
   const day = String(date.getDate()).padStart(2, '0');
   const hour = String(date.getHours()).padStart(2, '0');
   const timestamp = `${day}-${hour}00`;
-  const filename = `backup-${timestamp}.sql`;
+  const filename = `${env.PREFIX}backup-${timestamp}.sql`;
   const filepath = path.join(os.tmpdir(), filename);
 
   await dumpToFile(filepath);

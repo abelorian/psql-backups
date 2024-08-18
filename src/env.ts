@@ -32,5 +32,10 @@ export const env = envsafe({
     desc: 'pg dump command',
     default: '',
     allowEmpty: true,
+  }),
+  PREFIX: str({
+    desc: 'prefix for filename',
+    default: '',
+    allowEmpty: true,
   })
 })
