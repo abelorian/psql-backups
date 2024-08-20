@@ -37,5 +37,10 @@ export const env = envsafe({
     desc: 'prefix for filename',
     default: '',
     allowEmpty: true,
-  })
+  }),
+  CUSTOM_FILENAME: str({
+    desc: 'replace full filename',
+    default: '',
+    allowEmpty: true,
+  }),
 })
