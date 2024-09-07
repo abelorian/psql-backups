@@ -123,7 +123,7 @@ export const backup = async () => {
   await dumpToFile(filepath);
 
   const compressedFilePath = await compressFile(filepath);
-  await uploadToS3({ name: `${filename}.gz`, path: compressedFilePath });
+  await uploadToS3({ name: `${filename}.zip`, path: compressedFilePath });
 
   await deleteFile(filepath);
   await deleteFile(compressedFilePath);
