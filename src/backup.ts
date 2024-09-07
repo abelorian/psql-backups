@@ -117,8 +117,8 @@ export const backup = async () => {
 
   const date = new Date();
   const formattedDate = format(date, 'yyyy-MM-dd');
-  const filename = env.CUSTOM_FILENAME ? env.CUSTOM_FILENAME : `${env.PREFIX}backup-${formattedDate}.dump`;
-  const filepath = path.join(os.tmpdir(), filename);
+  const filename = env.CUSTOM_FILENAME ? env.CUSTOM_FILENAME : `${env.PREFIX}backup-${formattedDate}`;
+  const filepath = path.join(os.tmpdir(), `${filename}.dump`);
 
   await dumpToFile(filepath);
 
