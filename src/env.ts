@@ -43,4 +43,9 @@ export const env = envsafe({
     default: '',
     allowEmpty: true,
   }),
+  BACKUP_PASSWORD: str({
+    desc: 'password for backup',
+    default: '',
+    allowEmpty: true,
+  }),
 })

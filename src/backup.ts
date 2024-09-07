@@ -8,13 +8,20 @@ import path from "path";
 import os from "os";
 import { env } from "./env";
 
-const compressFile = async (filePath: string) => {
-  console.log("Compressing backup file...");
 
-  const compressedFilePath = `${filePath}.gz`;
+
+const compressFile = async (filePath: string) => {
+  console.log("Comprimiendo archivo de respaldo...");
+
+  const compressedFilePath = `${filePath}.zip`;
+  const password = env.BACKUP_PASSWORD; // Asegúrate de agregar esta variable de entorno
+
+  if (!password) {
+    throw new Error("La contraseña de respaldo no está configurada");
+  }
 
   await new Promise((resolve, reject) => {
-    exec(`gzip -c ${filePath} > ${compressedFilePath}`, (error, stdout, stderr) => {
+    exec(`zip -j -P "${password}" ${compressedFilePath} ${filePath}`, (error, stdout, stderr) => {
       if (error) {
         reject({ error: error, stderr: stderr.trimEnd() });
         return;
@@ -22,14 +29,16 @@ const compressFile = async (filePath: string) => {
       if (stderr) {
         console.log({ stderr: stderr.trimEnd() });
       }
-      console.log("File compressed successfully");
+      console.log("Archivo comprimido exitosamente");
       resolve(undefined);
     });
   });
 
-  console.log("Backup filesize (compressed):", filesize(statSync(compressedFilePath).size));
+  console.log("Tamaño del archivo de respaldo (comprimido):", filesize(statSync(compressedFilePath).size));
   return compressedFilePath;
 }
+
+
 
 const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
   console.log("Uploading backup to S3...");
@@ -50,10 +59,7 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
   }
 
   const client = new S3Client(clientOptions);
-
-  const now = new Date();
-  const day = format(now, 'dd');
-  const s3Key = `${day}/${name}`;
+  const s3Key = `${name}`;
 
   console.log("s3Key", s3Key);
 
@@ -69,10 +75,12 @@ const uploadToS3 = async ({ name, path }: { name: string, path: string }) => {
   console.log("Backup uploaded to S3...");
 }
 
+
+
 const dumpToFile = async (filePath: string) => {
   console.log("Dumping DB to file...");
 
-  const pgDumpCommand = env.PG_DUMP_COMMAND || `pg_dump --format=plain --clean --exclude-table=clicks`;
+  const pgDumpCommand = env.PG_DUMP_COMMAND || `pg_dump --clean --format=custom`;
 
   await new Promise((resolve, reject) => {
     exec(`${pgDumpCommand} --dbname=${env.BACKUP_DATABASE_URL} > ${filePath}`, (error, stdout, stderr) => {
@@ -92,6 +100,8 @@ const dumpToFile = async (filePath: string) => {
   console.log("DB dumped to file...");
 }
 
+
+
 const deleteFile = async (path: string) => {
   console.log("Deleting file...");
   await new Promise((resolve, reject) => {
@@ -106,10 +116,8 @@ export const backup = async () => {
   console.log("Initiating DB backup...");
 
   const date = new Date();
-  const day = String(date.getDate()).padStart(2, '0');
-  const hour = String(date.getHours()).padStart(2, '0');
-  const timestamp = `${day}-${hour}00`;
-  const filename = env.CUSTOM_FILENAME ? env.CUSTOM_FILENAME : `${env.PREFIX}backup-${timestamp}.sql`;
+  const formattedDate = format(date, 'yyyy-MM-dd');
+  const filename = env.CUSTOM_FILENAME ? env.CUSTOM_FILENAME : `${env.PREFIX}backup-${formattedDate}.dump`;
   const filepath = path.join(os.tmpdir(), filename);
 
   await dumpToFile(filepath);
