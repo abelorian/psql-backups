@@ -1,4 +1,4 @@
-FROM alpine:3.18 AS build
+FROM node:20-alpine AS build
 
 RUN apk add --update --no-cache nodejs npm
 
@@ -14,7 +14,7 @@ RUN npm install && \
     npm run build && \
     npm prune --production
 
-FROM alpine:3.18
+FROM node:20-alpine
 
 WORKDIR /root
 
@@ -25,8 +25,6 @@ ARG PG_VERSION='16'
 
 RUN apk add --update --no-cache \
     postgresql${PG_VERSION}-client \
-    nodejs \
-    npm \
     zip \
     --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main
 
