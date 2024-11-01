@@ -117,13 +117,14 @@ export const backup = async () => {
 
   const date = new Date();
   const formattedDate = format(date, 'yyyy-MM-dd');
+  const month = format(date, 'MM');
   const filename = env.CUSTOM_FILENAME ? env.CUSTOM_FILENAME : `${env.PREFIX}backup-${formattedDate}`;
   const filepath = path.join(os.tmpdir(), `${filename}.dump`);
 
   await dumpToFile(filepath);
 
   const compressedFilePath = await compressFile(filepath);
-  await uploadToS3({ name: `${filename}.zip`, path: compressedFilePath });
+  await uploadToS3({ name: `${month}/${filename}.zip`, path: compressedFilePath });
 
   await deleteFile(filepath);
   await deleteFile(compressedFilePath);
